@@ -1,0 +1,42 @@
+name: Publish to VDS
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: production
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install pnpm
+        run: npm install --global pnpm@11
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: pnpm install --frozen-lockfile
+      - name: Build frontend
+        working-directory: frontend
+        run: pnpm build
+      - name: Package release
+        run: |
+          printf '%s\n' "$GITHUB_SHA" > REVISION
+          tar -czf release.tar.gz backend frontend/dist REVISION
+      - name: Deploy commit
+        env:
+          VDS_HOST: ${{ secrets.VDS_HOST }}
+          VDS_SSH_KEY: ${{ secrets.VDS_SSH_KEY }}
+          VDS_KNOWN_HOSTS: ${{ secrets.VDS_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$VDS_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$VDS_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          ssh -i ~/.ssh/deploy_key -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=20 "student-deploy@$VDS_HOST" "deploy $GITHUB_SHA" < release.tar.gz
