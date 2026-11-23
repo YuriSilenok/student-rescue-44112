@@ -2,7 +2,24 @@ export type Debt = { id:number; name:string; note:string; done:boolean; idFromRa
 export type Lesson = { id:number; start:string; end:string; date:string; title:string; teacher:string; teacherId:number; group:string; room:string; subgroups:number[]; subgroupUnknown:boolean; changed:boolean; special:boolean };
 export type Schedule = { lessons:Lesson[]; stale:boolean; updated:string|null; source:string; fetchedAt:string };
 export type TeacherGap = { teacher:Debt; start:number; end:number; previous:Lesson[]; next:Lesson[]; available:[number,number][] };
+export type CombinedPeriod = { start:string; end:string; date:string; own:Lesson[] };
 export const minutes=(s:string)=>Number(s.slice(11,13))*60+Number(s.slice(14,16));
+
+export function combinedSchedule(own:Lesson[],teachers:Record<number,Schedule>,debts:Debt[]):CombinedPeriod[]{
+  const periods=new Map<string,CombinedPeriod>();
+  const add=(lesson:Lesson,student:boolean)=>{
+    if(lesson.end<=lesson.start)return;
+    const key=lesson.start+'|'+lesson.end;
+    let period=periods.get(key);
+    if(!period){period={start:lesson.start,end:lesson.end,date:lesson.date,own:[]};periods.set(key,period);}
+    if(student)period.own.push(lesson);
+  };
+  own.forEach(l=>add(l,true));
+  debts.filter(d=>!d.done).forEach(d=>(teachers[d.id]?.lessons||[]).forEach(l=>add(l,false)));
+  return [...periods.values()].map(period=>({...period,
+    own:own.filter(l=>l.date===period.date&&l.start<period.end&&l.end>period.start)
+  })).sort((a,b)=>a.start.localeCompare(b.start)||a.end.localeCompare(b.end));
+}
 
 // Subtract the student's occupied intervals, including their travel allowance.
 export function freeSegments(start:number,end:number,own:Lesson[],day:string,travel:number):[number,number][]{
