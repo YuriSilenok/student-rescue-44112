@@ -1,0 +1,59 @@
+/* Dense schedule: preserve readable text and use space for the lesson itself. */
+.content { padding-top: 25px; }
+.page-heading { margin-bottom: 18px; }
+.page-heading h1 { font-size: 32px; margin: 7px 0; }
+.overview { margin-bottom: 18px; gap: 10px; }
+.overview-primary { min-height: 92px; padding: 14px 18px; }
+.overview-primary strong { margin: 4px 0; }
+.overview-stat { padding: 13px 18px; }
+.overview-stat strong { font-size: 25px; margin: 4px 0 6px; }
+.schedule-toolbar { padding: 10px 16px; }
+.week-strip { padding: 8px 16px; gap: 6px; }
+.week-strip button { padding: 6px 0 4px; gap: 4px; }
+.week-strip button > strong { font-size: 17px; }
+.day-heading { padding: 13px 18px; }
+.timeline { padding: 0 16px 12px; }
+.lesson-row { grid-template-columns: 56px minmax(0, 1fr); gap: 10px; }
+.timeline-track { display: none; }
+.lesson-time { padding-top: 12px; gap: 4px; }
+.lesson-time strong { font-size: .875rem; }
+.lesson-time > span { font-size: .8125rem; }
+.lesson-card { padding: 10px 12px; margin-bottom: 6px; border-radius: 7px; }
+.lesson-meta { gap: 7px; flex-wrap: wrap; line-height: 1.3; }
+.lesson-kind { padding: 2px 5px; }
+.lesson-card h3 { margin: 5px 0 7px; font-size: 1rem; line-height: 1.35; }
+.lesson-bottom { gap: 5px 14px; font-size: .875rem; line-height: 1.4; }
+.lesson-bottom > span { gap: 5px; }
+.lesson-extra { margin-top: 8px; padding-top: 4px; }
+.lesson-extra > summary { min-height: 30px; line-height: 1.35; font-size: .875rem; }
+.lesson-extra-body { padding-top: 6px; }
+.teacher-only-period .lesson-extra { margin-top: 4px; border-top: 0; padding-top: 0; }
+.teacher-comparison { padding: 9px 10px; margin-bottom: 6px; }
+.comparison-heading strong { line-height: 1.4; }
+.comparison-note { margin: 3px 0 5px; }
+.comparison-class { padding-top: 6px; }
+.comparison-class > div { gap: 5px 10px; }
+.comparison-class p { margin: 4px 0 2px; line-height: 1.4; }
+.student-period-class + .student-period-class { margin-top: 9px; padding-top: 9px; }
+.opportunities-view { padding: 0 18px 16px; }
+.teacher-window, .opportunity { padding: 12px; margin-bottom: 7px; }
+.shared-time { margin: 9px 0; padding: 8px 10px; }
+.windows-section { margin-bottom: 16px; padding-bottom: 15px; }
+.section-explanation { margin-bottom: 10px; line-height: 1.55; }
+@media (max-width: 480px) {
+  .content { padding: 18px 10px; }
+  .page-heading h1 { font-size: 28px; }
+  .page-heading p { line-height: 1.5; }
+  .overview-primary { min-height: 82px; padding: 12px; }
+  .schedule-toolbar { padding: 9px; gap: 8px; }
+  .week-strip { padding: 6px 8px; gap: 3px; }
+  .day-heading { padding: 11px; gap: 5px; }
+  .timeline { padding: 0 8px 8px; }
+  .lesson-row { grid-template-columns: 43px minmax(0, 1fr); gap: 6px; }
+  .lesson-card { padding: 8px 9px; }
+  .lesson-card h3 { font-size: .9375rem; }
+  .lesson-time { padding-top: 10px; }
+  .lesson-extra > summary, .lesson-bottom { font-size: .875rem; }
+  .teacher-comparison { padding: 8px; }
+  .opportunities-view { padding: 0 11px 12px; }
+}
