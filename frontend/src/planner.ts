@@ -21,17 +21,17 @@ export function combinedSchedule(own:Lesson[],teachers:Record<number,Schedule>,d
   })).sort((a,b)=>a.start.localeCompare(b.start)||a.end.localeCompare(b.end));
 }
 
-// Subtract the student's occupied intervals, including their travel allowance.
-export function freeSegments(start:number,end:number,own:Lesson[],day:string,travel:number):[number,number][]{
+// Subtract only the student's actual classes; travel time is the student's decision.
+export function freeSegments(start:number,end:number,own:Lesson[],day:string):[number,number][]{
   let segments:[number,number][]=[[start,end]];
   for(const lesson of own.filter(l=>l.date===day)){
-    const a=minutes(lesson.start)-travel,b=minutes(lesson.end)+travel;
+    const a=minutes(lesson.start),b=minutes(lesson.end);
     segments=segments.flatMap(([s,e]):[number,number][]=>e<=a||s>=b?[[s,e]]:[[s,Math.min(e,a)],[Math.max(s,b),e]].filter(([x,y])=>y>x) as [number,number][]);
   }
   return segments.filter(([s,e])=>e-s>=10);
 }
 
-export function teacherGaps(teachers:Record<number,Schedule>,debts:Debt[],own:Lesson[],day:string,travel:number):TeacherGap[]{
+export function teacherGaps(teachers:Record<number,Schedule>,debts:Debt[],own:Lesson[],day:string):TeacherGap[]{
   const result:TeacherGap[]=[];
   for(const teacher of debts.filter(d=>!d.done)){
     // Union simultaneous and overlapping classes first: a duplicate stream must not create a false gap.
@@ -53,7 +53,7 @@ export function teacherGaps(teachers:Record<number,Schedule>,debts:Debt[],own:Le
       // Ordinary short breaks and the lunch break are not advertised as a teacher's window.
       if(after.start-before.end<60)continue;
       result.push({teacher,start:before.end,end:after.start,previous:before.last,next:after.first,
-        available:freeSegments(before.end,after.start,own,day,travel)});
+        available:freeSegments(before.end,after.start,own,day)});
     }
   }
   return result.sort((a,b)=>a.start-b.start||a.teacher.name.localeCompare(b.teacher.name));
