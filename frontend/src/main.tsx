@@ -101,7 +101,6 @@ function App(){
 
   useEffect(()=>{try{localStorage.setItem(STORAGE,JSON.stringify(profile));setSaveError(false);}catch{setSaveError(true);}},[profile]);
   useEffect(()=>{const up=()=>setOnline(true),down=()=>setOnline(false),prompt=(e:Event)=>{e.preventDefault();setInstall(e);};window.addEventListener('online',up);window.addEventListener('offline',down);window.addEventListener('beforeinstallprompt',prompt);return()=>{window.removeEventListener('online',up);window.removeEventListener('offline',down);window.removeEventListener('beforeinstallprompt',prompt);};},[]);
-  useEffect(()=>{const timer=setInterval(()=>setRefresh(n=>n+1),300000);const focus=()=>setRefresh(n=>n+1);window.addEventListener('focus',focus);return()=>{clearInterval(timer);window.removeEventListener('focus',focus);};},[]);
   useEffect(()=>{const controller=new AbortController();setCatalogError('');api<Catalog>('catalog'+(profile.year?'?year='+encodeURIComponent(profile.year):''),controller.signal).then(c=>{setCatalog(c);if(!profile.year)patch({year:c.year});}).catch(e=>{if(e.name!=='AbortError')setCatalogError(e.message);});return()=>controller.abort();},[profile.year,catalogTick]);
   useEffect(()=>{
     const controller=new AbortController();const seq=++sequence.current;
